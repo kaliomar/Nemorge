@@ -2,11 +2,11 @@ import sys,os
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow,QAction,qApp, QApplication, QWidget, QLineEdit,\
-    QPushButton,QVBoxLayout, QHBoxLayout, QLabel,QFileDialog
+    QPushButton,QVBoxLayout, QHBoxLayout, QLabel,QFileDialog,QDialog
 
 from zipping_module import zipit
 from rename_module import renameit
-
+from dialog import Ui_Dialog
 
 class Nemorge(QWidget):
     def __init__(self):
@@ -18,6 +18,7 @@ class Nemorge(QWidget):
         self.rnm = QPushButton("Rename")
         self.lbl1 = QLabel("Clean")
         self.lbl2 = QLabel(" ")
+        self.var = 0
 
         self.init_ui()
 
@@ -54,6 +55,7 @@ class Nemorge(QWidget):
             if path:
                 self.link.setText(path)
                 self.lbl1.setText('Valid')
+                self.var = 0
             else:
                 self.lbl1.setText('Invalid')
         except:
@@ -64,14 +66,32 @@ class Nemorge(QWidget):
             work_path = self.link.text()
             os.chdir(work_path)
             zipit()
+            self.var = 1
         except:
             pass
 
+    def check_comp(self):
+        Dialog = QDialog()
+        ui = Ui_Dialog()
+        ui.setupUi(Dialog)
+        Dialog.show()
+        self.res = Dialog.exec_()
     def renaming(self):
         try:
             work_path = self.link.text()
-            os.chdir(work_path)
-            renameit()
+            if work_path:
+                if self.var == 0:
+                    self.check_comp()
+                    if self.res == 0:
+                        pass
+                    else:
+                        os.chdir(work_path)
+                        renameit()
+                        self.link.clear()
+                else:
+                    os.chdir(work_path)
+                    renameit()
+                    self.link.clear()
         except:
             pass
 
@@ -182,6 +202,3 @@ class menubar(QMainWindow):
 app = QApplication(sys.argv)
 win = menubar()
 sys.exit(app.exec_())
-
-
-
