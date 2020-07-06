@@ -2,7 +2,7 @@ import sys,os
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow,QAction,qApp, QApplication, QWidget, QLineEdit,\
-    QPushButton,QVBoxLayout, QHBoxLayout, QLabel,QFileDialog,QDialog
+    QPushButton,QVBoxLayout, QHBoxLayout, QLabel,QFileDialog,QDialog,QProgressBar
 
 from zipping_module import zipit
 from rename_module import renameit
@@ -18,6 +18,7 @@ class Nemorge(QWidget):
         self.rnm = QPushButton("Rename")
         self.lbl1 = QLabel("Clean")
         self.lbl2 = QLabel(" ")
+        self.prgrs = QProgressBar()
         self.var = 0
 
         self.init_ui()
@@ -28,28 +29,33 @@ class Nemorge(QWidget):
         h_layout2 = QHBoxLayout()
         h_layout2.addStretch()
         h_layout3 = QHBoxLayout()
+        h_layout4 = QHBoxLayout()
 
         h_layout1.addWidget(self.link)
         h_layout1.addWidget(self.opn)
         h_layout2.addWidget(self.rnm)
         h_layout2.addWidget(self.cpr)
         h_layout3.addWidget(self.lbl2)
+        h_layout4.addWidget(self.prgrs)
 
         v_layout.addLayout(h_layout3)
         v_layout.addLayout(h_layout1)
         v_layout.addLayout(h_layout2)
         v_layout.addStretch()
+        v_layout.addLayout(h_layout4)
         v_layout.addWidget(self.lbl1)
 
         self.opn.clicked.connect(self.opn_file)
         self.cpr.clicked.connect(self.zipping)
         self.rnm.clicked.connect(self.renaming)
+        # self.chk.clicked.connect(self.prgrs_bar)
 
         self.setLayout(v_layout)
 
         self.show()
 
     def opn_file(self):
+        self.prgrs.setValue(0)
         try:
             path = QFileDialog.getExistingDirectory(self, 'select a file', '')
             if path:
@@ -94,6 +100,11 @@ class Nemorge(QWidget):
                     self.link.clear()
         except:
             pass
+
+    def prgrs_bar(self):
+        #Todo Connect filesize with value of progressbar
+        #Todo this is how set progressbar self.prgrs.setValue(value)
+        pass
 
 
 class menubar(QMainWindow):
