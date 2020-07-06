@@ -14,9 +14,10 @@ class Nemorge(QWidget):
         self.link = QLineEdit(self)
         self.link.setPlaceholderText("Go to your path...")
         self.opn = QPushButton("Open")
-        self.cpr = QPushButton("Rename")
-        self.rnm = QPushButton("Compress")
-        self.lbl = QLabel("Clean")
+        self.cpr = QPushButton("Compress")
+        self.rnm = QPushButton("Rename")
+        self.lbl1 = QLabel("Clean")
+        self.lbl2 = QLabel(" ")
 
         self.init_ui()
 
@@ -25,17 +26,19 @@ class Nemorge(QWidget):
         h_layout1 = QHBoxLayout()
         h_layout2 = QHBoxLayout()
         h_layout2.addStretch()
+        h_layout3 = QHBoxLayout()
 
         h_layout1.addWidget(self.link)
         h_layout1.addWidget(self.opn)
-        h_layout2.addWidget(self.cpr)
         h_layout2.addWidget(self.rnm)
+        h_layout2.addWidget(self.cpr)
+        h_layout3.addWidget(self.lbl2)
 
-
+        v_layout.addLayout(h_layout3)
         v_layout.addLayout(h_layout1)
         v_layout.addLayout(h_layout2)
         v_layout.addStretch()
-        v_layout.addWidget(self.lbl)
+        v_layout.addWidget(self.lbl1)
 
         self.opn.clicked.connect(self.opn_file)
         self.cpr.clicked.connect(self.zipping)
@@ -50,9 +53,9 @@ class Nemorge(QWidget):
             path = QFileDialog.getExistingDirectory(self, 'select a file', '')
             if path:
                 self.link.setText(path)
-                self.lbl.setText('Valid')
+                self.lbl1.setText('Valid')
             else:
-                self.lbl.setText('Invalid')
+                self.lbl1.setText('Invalid')
         except:
             pass
 
@@ -90,68 +93,84 @@ class menubar(QMainWindow):
         # make main menus
         file = bar.addMenu('File')
         edit = bar.addMenu('Edit')
+        run = bar.addMenu('Run')
 
         # make actions of menus
-        new_icon = QIcon('image/new-file.png')
-        new_action = QAction(new_icon,'&New',self)
-        new_action.setShortcut('Ctrl+N')
-        new_action.setStatusTip('new file')
-
         opn_icon = QIcon('image/open-file.png')
         opn_action = QAction(opn_icon,'&Open',self)
         opn_action.setShortcut('Ctrl+O')
         opn_action.setStatusTip('open a file')
-
-        sav_icon = QIcon('image/save-file.png')
-        sav_action = QAction(sav_icon,'&Save',self)
-        sav_action.setShortcut('Ctrl+S')
-        sav_action.setStatusTip('save current work')
 
         qut_icon = QIcon('image/quit.png')
         qut_action = QAction(qut_icon,'&Quit',self)
         qut_action.setShortcut('Ctrl+Q')
         qut_action.setStatusTip('quit the program')
 
-        find_action = QAction('find...',self)
-        find_action.setShortcut('Ctrl+F')
-        rplc_action = QAction('replace...',self)
-        rplc_action.setShortcut('Ctrl+R')
+        cpy_icon = QIcon('image/copy.png')
+        cpy_action = QAction(cpy_icon, '&Copy',self)
+        cpy_action.setShortcut('Ctrl+C')
+        cpy_action.setStatusTip('copy current selected')
+
+        cut_icon = QIcon('image/cut.png')
+        cut_action = QAction(cut_icon, '&Cut',self)
+        cut_action.setShortcut('Ctrl+X')
+        cut_action.setStatusTip('cut current selected')
+
+        pst_icon = QIcon('image/paste.png')
+        pst_action = QAction(pst_icon, '&Paste',self)
+        pst_action.setShortcut('Ctrl+V')
+        pst_action.setStatusTip('paste from clipboard')
+
+        comp_icon = QIcon('image/comp.png')
+        comp_action = QAction(comp_icon, '&Compress',self)
+        comp_action.setShortcut('Ctrl+R')
+        comp_action.setStatusTip('Compress all uncompressed folders')
+
+        renm_icon = QIcon('image/renm.png')
+        renm_action = QAction(renm_icon,'&Rename',self)
+        renm_action.setShortcut('Ctrl+N')
+        renm_action.setStatusTip('Rename all folders and files')
 
         # put actions in their menus
-        file.addAction(new_action)
         file.addAction(opn_action)
-        file.addAction(sav_action)
         file.addSeparator()
         file.addAction(qut_action)
-        find_menu = edit.addMenu('Find')
-        find_menu.addAction(find_action)
-        find_menu.addAction(rplc_action)
+        edit.addAction(cpy_action)
+        edit.addAction(cut_action)
+        edit.addAction(pst_action)
+        run.addAction(comp_action)
+        run.addAction(renm_action)
+
 
         # actions signals and slots
-        file.triggered.connect(self.respond)
+        file.triggered.connect(self.file_respond)
+        edit.triggered.connect(self.edit_respond)
+        run.triggered.connect(self.run_respond)
+
 
         self.setWindowTitle('Nemorge')
-        self.resize(600,250)
+        self.resize(450,250)
 
         self.show()
 
-    def respond(self,q):
+    def file_respond(self,q):
         signal = q.text()
-        if signal == '&New':
-            self.form_widget.clr_text()
-        elif signal == '&Save':
-            self.form_widget.sv_file()
-        elif signal == '&Open':
+        if signal == '&Open':
             self.form_widget.opn_file()
         elif signal == '&Quit':
             qApp.quit()
 
+    def edit_respond(self,q):
+        pass
 
+    def run_respond(self,q):
+        signal = q.text()
+        if signal == '&Compress':
+            self.form_widget.zipping()
+        elif signal == '&Rename':
+            self.form_widget.renaming()
 
 
 app = QApplication(sys.argv)
 win = menubar()
 sys.exit(app.exec_())
-
-
-
