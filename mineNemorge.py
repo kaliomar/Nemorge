@@ -161,7 +161,15 @@ class menubar(QMainWindow):
             qApp.quit()
 
     def edit_respond(self,q):
-        pass
+        signal = q.text()
+        var = self.form_widget.link.text()
+        if signal == '&Copy':
+            qApp.clipboard().setText(var)
+        elif signal == '&Cut':
+            qApp.clipboard().setText(var)
+            self.form_widget.link.clear()
+        elif signal == '&Paste':
+            self.form_widget.link.setText(qApp.clipboard().text())
 
     def run_respond(self,q):
         signal = q.text()
@@ -174,3 +182,6 @@ class menubar(QMainWindow):
 app = QApplication(sys.argv)
 win = menubar()
 sys.exit(app.exec_())
+
+
+
