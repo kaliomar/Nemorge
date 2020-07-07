@@ -1,11 +1,11 @@
 import os
-import shutil
 
 
-def zipit():
+def sizeit():
     Files = os.listdir(os.getcwd())
     Folders = []
     Rars = []
+    max_size = 0
 
     for item in Files:
         if item[-4:] == '.rar' or item[-4:] == '.zip' or item[-3:] == '.7z':
@@ -17,6 +17,13 @@ def zipit():
                 pass
             else:
                 Folders.append(item)
-
     for folder in Folders:
-        shutil.make_archive(folder,'zip',folder)
+        total_size = 0
+        for dirpath, dirnames, filenames in os.walk(folder):
+            for i in filenames:
+                f = os.path.join(dirpath, i)
+                total_size += os.path.getsize(f)
+        max_size += total_size
+    print(max_size)
+
+
