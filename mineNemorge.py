@@ -2,11 +2,10 @@ import sys,os
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow,QAction,qApp, QApplication, QWidget, QLineEdit,\
-    QPushButton,QVBoxLayout, QHBoxLayout, QLabel,QFileDialog,QDialog,QProgressBar
+    QPushButton,QVBoxLayout, QHBoxLayout, QLabel,QFileDialog,QProgressBar,QMessageBox
 
 from zipping_module import zipit
 from rename_module import renameit
-from dialog import Ui_Dialog
 
 class Nemorge(QWidget):
     def __init__(self):
@@ -19,6 +18,11 @@ class Nemorge(QWidget):
         self.lbl1 = QLabel("Clean")
         self.lbl2 = QLabel(" ")
         self.prgrs = QProgressBar()
+        self.msg = QMessageBox()
+        self.msg.setIcon(QMessageBox.Warning)
+        self.msg.setText('Are you sure to rename without compressing!')
+        self.msg.setWindowTitle('Warning')
+        self.msg.setStandardButtons(QMessageBox.Yes|QMessageBox.Cancel)
         self.var = 0
 
         self.init_ui()
@@ -48,7 +52,7 @@ class Nemorge(QWidget):
         self.opn.clicked.connect(self.opn_file)
         self.cpr.clicked.connect(self.zipping)
         self.rnm.clicked.connect(self.renaming)
-        # self.chk.clicked.connect(self.prgrs_bar)
+
 
         self.setLayout(v_layout)
 
@@ -76,30 +80,25 @@ class Nemorge(QWidget):
         except:
             pass
 
-    def check_comp(self):
-        Dialog = QDialog()
-        ui = Ui_Dialog()
-        ui.setupUi(Dialog)
-        Dialog.show()
-        self.res = Dialog.exec_()
     def renaming(self):
         try:
             work_path = self.link.text()
             if work_path:
                 if self.var == 0:
-                    self.check_comp()
-                    if self.res == 0:
-                        pass
-                    else:
+                    self.msg.show()
+                    whichBtn = self.msg.exec_()
+                    if whichBtn == QMessageBox.Yes:
                         os.chdir(work_path)
                         renameit()
-                        self.link.clear()
+                    else:
+                        pass
                 else:
+                    print('from outer one')
                     os.chdir(work_path)
                     renameit()
-                    self.link.clear()
         except:
             pass
+
 
     def prgrs_bar(self):
         #Todo Connect filesize with value of progressbar
