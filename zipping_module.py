@@ -19,4 +19,5 @@ def zipit():
                 Folders.append(item)
 
     for folder in Folders:
+        print(folder)
         shutil.make_archive(folder,'zip',folder)
